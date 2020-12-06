@@ -8,18 +8,13 @@ from sklearn.metrics import mean_squared_error
 import math
 from sklearn.preprocessing import MinMaxScaler
 
-# fix random seed for reproducibility
-np.random.seed(7)
-
 # Import data
-data = pd.read_csv('last.csv')
-# Drop date variable
-#data = data.drop(['DATE'], 1)
+data = pd.read_csv('data.csv')
 
 # Dimensions of dataset
 n = data.shape[0]
 p = data.shape[1]
-print(p)
+
 # Make data a numpy array
 data = data.values
 
@@ -44,7 +39,6 @@ y_test = data_test[:, 0]
 trainX = np.reshape(X_train, (X_train.shape[0],1, X_train.shape[1]))
 testX = np.reshape(X_test, (X_test.shape[0], 1, X_test.shape[1]))
 
-print(X_train.shape[0],X_train.shape[1])
 # create and fit the LSTM network
 model = tf.keras.Sequential()
 model.add(tf.keras.layers.LSTM(16,  return_sequences=True))
@@ -65,7 +59,7 @@ plt.plot(history.history['val_loss'], label='test')
 plt.legend()
 plt.show()
 
-#plt.title('WIG20')
+plt.title('AAP')
 plt.plot(testPredict,label='predict')
 plt.plot(y_test,label='true')
 plt.legend()
