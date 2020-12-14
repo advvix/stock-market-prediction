@@ -3,9 +3,6 @@ import numpy as np
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
-import math
 from sklearn.preprocessing import MinMaxScaler
 
 # Import data
@@ -41,17 +38,19 @@ testX = np.reshape(X_test, (X_test.shape[0], 1, X_test.shape[1]))
 
 # create and fit the LSTM network
 model = tf.keras.Sequential()
-model.add(tf.keras.layers.LSTM(16,  return_sequences=True))
-model.add(tf.keras.layers.LSTM(16))
+model.add(tf.keras.layers.LSTM(25,  return_sequences=True))
+model.add(tf.keras.layers.LSTM(25))
 model.add(tf.keras.layers.Dense(1, activation='linear'))
-opt = tf.keras.optimizers.Adam(learning_rate=0.00315)
-model.compile(loss='mean_squared_error', optimizer=opt, metrics=['mape'])
-history = model.fit(trainX, y_train, epochs=200, validation_split=0.05, verbose=2)
+opt = tf.keras.optimizers.Adam(learning_rate=0.0075)
+model.compile(loss='mean_squared_error', optimizer=opt)
+history = model.fit(trainX, y_train, epochs=200, validation_split=0.1, verbose=2)
+
 # make predictions
-trainPredict = model.predict(trainX)
 testPredict = model.predict(testX)
-#print('Train score:',np.sqrt(history.history['loss']))
-#print('Test score:',np.sqrt(history.history['val_loss']))
+
+testPred = []
+for i in range(len(y_test)):
+    testPred.append(testPredict[:][i][0][0].astype(np.float))
 
 plt.title('Mean Squared Error')
 plt.plot(history.history['loss'],label='train')
@@ -64,3 +63,6 @@ plt.plot(testPredict,label='predict')
 plt.plot(y_test,label='true')
 plt.legend()
 plt.show()
+
+loss = tf.keras.losses.mean_squared_error(y_test, testPred).numpy()
+print('Błąd średniokwadratowy:', loss)
